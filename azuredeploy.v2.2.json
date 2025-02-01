@@ -1,0 +1,34 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "env": {
+            "type": "string",
+            "allowedValues": ["dev", "prod"],
+            "defaultValue": "dev",
+            "metadata": {
+                "description": "Deployment environment"
+            }
+        }
+    },
+    "variables": {
+        "storageName": "[concat('mystorageashok', parameters('env'))]"
+    },
+    "resources": [
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2023-05-01",
+            "name": "[variables('storageName')]",
+            "location": "[resourceGroup().location]",
+            "kind": "StorageV2",
+            "sku": { "name": "Standard_LRS" }
+        }
+    ],
+    "outputs": {
+        "storageEndpoint": {
+            "type": "object",
+            "value": "[reference(variables('storageName')).primaryEndpoints]"
+        }
+    }
+}
+#az deployment group create --name webappashokdeploymentName --resource-group company-1 --template-file $templateFile --parameters env=dev
